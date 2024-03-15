@@ -15,6 +15,15 @@ function App() {
   const myTokensData = tokensData.filter((x, index) =>
     myTokenIds.includes(index)
   );
+
+  const viewNFT = (tokenId) => {
+    window.open(
+      `https://testnets.opensea.io/assets/mumbai/${
+        import.meta.env.VITE_contract_address
+      }/${tokenId}`
+    );
+  };
+
   return (
     <Container>
       <Header />
@@ -35,7 +44,10 @@ function App() {
                     <Text className="block text-2xl">Name: {x.name}</Text>
                     <Text className="block">Description: {x.description}</Text>
                     {myTokensData.includes(x) ? (
-                      <Button className="px-8 py-2 text-xl mt-2">
+                      <Button
+                        onClick={() => viewNFT(x.edition)}
+                        className="px-8 py-2 text-xl mt-2"
+                      >
                         View NFT
                       </Button>
                     ) : (
@@ -61,7 +73,10 @@ function App() {
                     <Text className="block text-2xl">Name: {x.name}</Text>
                     <Text className="block">Description: {x.description}</Text>
                     {myTokensData.includes(x) ? (
-                      <Button className="px-8 py-2 text-xl mt-2">
+                      <Button
+                        onClick={() => viewNFT(x.edition)}
+                        className="px-8 py-2 text-xl mt-2"
+                      >
                         View NFT
                       </Button>
                     ) : (
