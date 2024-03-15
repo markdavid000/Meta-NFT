@@ -1,14 +1,20 @@
 import { Box, Button, Container, Flex, Text } from "@radix-ui/themes";
+import { ToastContainer } from "react-toastify";
 import { configureWeb3Modal } from "./connection";
 import "@radix-ui/themes/styles.css";
 import Header from "./component/Header";
 import AppTabs from "./component/AppTabs";
 import useCollections from "./hooks/useCollections";
 import useMyNfts from "./hooks/useMyNfts";
+import useMintNFT from "./hooks/useMintNFT";
+import { useState } from "react";
+import TransferModal from "./component/TransferModal";
 
 configureWeb3Modal();
 
 function App() {
+  const [edition, setEdition] = useState("");
+  const mint = useMintNFT(edition);
   const tokensData = useCollections();
   const myTokenIds = useMyNfts();
 
@@ -43,16 +49,15 @@ function App() {
                     />
                     <Text className="block text-2xl">Name: {x.name}</Text>
                     <Text className="block">Description: {x.description}</Text>
-                    {myTokensData.includes(x) ? (
+                    <Flex className="justify-center" gap="2">
                       <Button
                         onClick={() => viewNFT(x.edition)}
-                        className="px-8 py-2 text-xl mt-2"
+                        className="px-8 py-2 mt-2"
                       >
                         View NFT
                       </Button>
-                    ) : (
-                      <Button className="px-8 py-2 text-xl mt-2">Mint</Button>
-                    )}
+                      <TransferModal />
+                    </Flex>
                   </Box>
                 ))
               )}
@@ -75,12 +80,17 @@ function App() {
                     {myTokensData.includes(x) ? (
                       <Button
                         onClick={() => viewNFT(x.edition)}
-                        className="px-8 py-2 text-xl mt-2"
+                        className="px-8 py-2 mt-2"
                       >
                         View NFT
                       </Button>
                     ) : (
-                      <Button className="px-8 py-2 text-xl mt-2">Mint</Button>
+                      <Button
+                        onClick={() => mint(setEdition(x.edition))}
+                        className="px-8 py-2 mt-2"
+                      >
+                        Mint
+                      </Button>
                     )}
                   </Box>
                 ))
@@ -89,6 +99,7 @@ function App() {
           }
         />
       </main>
+      <ToastContainer />
     </Container>
   );
 }
