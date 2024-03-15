@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -8,8 +8,21 @@ import {
   Text,
   TextField,
 } from "@radix-ui/themes";
+import useTransfer from "../hooks/useTransferNFT";
+import useCollections from "../hooks/useCollections";
+import useMyNfts from "../hooks/useMyNfts";
 
 const TransferModal = () => {
+  const [addressTo, setAddressTo] = useState("");
+  const [edition, setEdition] = useState("");
+  const handleTransfer = useTransfer(addressTo, edition);
+  const tokensData = useCollections();
+  const myTokenIds = useMyNfts();
+
+  const myTokensData = tokensData.filter((x, index) =>
+    myTokenIds.includes(index)
+  );
+
   return (
     <Dialog.Root>
       <Dialog.Trigger>
@@ -22,7 +35,11 @@ const TransferModal = () => {
             <Text as="div" size="2" mb="1" weight="bold">
               New Owner Address
             </Text>
-            <TextField.Input placeholder="0x0000..." />
+            <TextField.Input
+              value={addressTo}
+              onChange={(e) => setAddressTo(e.target.value)}
+              placeholder="0x0000..."
+            />
           </label>
         </Flex>
 
@@ -32,9 +49,18 @@ const TransferModal = () => {
               Cancel
             </Button>
           </Dialog.Close>
-          <Dialog.Close>
-            <Button className="bg-red-500">Transfer</Button>
-          </Dialog.Close>
+          {tokensData.map((x) => (
+            <Dialog.Close>
+              {myTokensData.includes(x) && (
+                <Button
+                  onClick={() => handleTransfer(setEdition(x.edition))}
+                  className="bg-red-500"
+                >
+                  Transfer
+                </Button>
+              )}
+            </Dialog.Close>
+          ))}
         </Flex>
       </Dialog.Content>
     </Dialog.Root>
